@@ -4,28 +4,38 @@ var thlm_settings_product = (function($, window, document) {
     *------------------------------------*/
     $(function() {
 
-
-
         $("form.cart").submit(function(e) {
 
             e.preventDefault();
 
             var product = $(document.activeElement).val();
-            //console.log($(document.activeElement).val());
+            var $thisbutton = $(document.activeElement);
 
             var formData = new FormData(this);
 
-            //console.log(formData);
-
             formData.append("action", "themehigh_ajax_add_to_cart");
-            formData.append("product", product);
+            formData.append("product_id", product);
+
+            var notice_wrapper = th_var.notice_wrapper;
+
+            $(document.body).trigger('adding_to_cart', [$thisbutton, formData]);
 
             $.ajax({
-                url: window.location.pathname,
+                url: th_var.ajaxurl,
+                //url: woocommerce_params.wc_ajax_url.toString().replace('%%endpoint%%', 'add_to_cart'),
                 type: 'POST',
                 data: formData,
                 success: function (data) {
-                    alert(data)
+                    console.log(data);
+                    var notice = data.notices;
+                    var mini_cart = data.mini_cart;
+                    if(mini_cart){
+                        $(document.body).trigger('added_to_cart', [mini_cart.fragments, mini_cart.cart_hash, $thisbutton]);
+                    }
+                    if(notice){
+                        $(notice_wrapper +":first").html(notice);
+                        smooth_scroll('#th-wooajax-notice-pointer');
+                    }
                 },
                 cache: false,
                 contentType: false,
@@ -34,34 +44,11 @@ var thlm_settings_product = (function($, window, document) {
         });
 
 
-
-
-
-
-        $("button[name='add-to-cart-ppppp']").click(function(event){
-            event.preventDefault();
-            var form = $(this).closest("form");
-
-            $(form).submit(function(e) {
-
-            });
-
-            //event.preventDefault();
-            //alert("The paragraph was clicked.");
-            var product = $(this).val();
-            var form = $(this).closest("form");
-
-            //var formData = $(form).serializeArray();
-            var formData = new FormData(form);
-
-            //formData.push({name: 'action', value: 'themehigh_ajax_add_to_cart'});
-            //formData.push({name: 'product', value: product });
-
-            console.log(formData);
-
-
-        });
-
+        function smooth_scroll(target){
+            $('html, body').animate({
+                scrollTop: $(target).offset().top-40
+            }, 600);
+        }
 
     });
    /*------------------------------------
