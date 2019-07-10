@@ -127,6 +127,8 @@ if(!class_exists('Themehigh_Ajax')):
                 $this->write_log('add to cart reached');
                 $this->write_log('add to cart reached');
 
+                $this->write_log($_POST);
+
         		if ( $passed_validation && false !== WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation ) && 'publish' === $product_status ) {
 
                     $this->write_log('add to cart reached');
@@ -184,6 +186,7 @@ if(!class_exists('Themehigh_Ajax')):
 
 
         public static function get_refreshed_fragments() {
+        global $woocommerce;
     		ob_start();
 
     		woocommerce_mini_cart();

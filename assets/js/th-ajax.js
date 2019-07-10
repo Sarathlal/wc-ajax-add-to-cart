@@ -16,6 +16,8 @@ var thlm_settings_product = (function($, window, document) {
             formData.append("action", "themehigh_ajax_add_to_cart");
             formData.append("product_id", product);
 
+            console.log(formData);
+
             var notice_wrapper = th_var.notice_wrapper;
 
             $(document.body).trigger('adding_to_cart', [$thisbutton, formData]);
@@ -25,8 +27,13 @@ var thlm_settings_product = (function($, window, document) {
                 //url: woocommerce_params.wc_ajax_url.toString().replace('%%endpoint%%', 'add_to_cart'),
                 type: 'POST',
                 data: formData,
+                beforeSend: function() {
+                    // setting a timeout
+                    $($thisbutton).addClass('loading');
+                    $($thisbutton).removeClass('alt');
+                },
                 success: function (data) {
-                    console.log(data);
+                    $($thisbutton).addClass('alt');
                     var notice = data.notices;
                     var mini_cart = data.mini_cart;
                     if(mini_cart){
